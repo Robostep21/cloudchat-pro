@@ -2,14 +2,11 @@
   "name": "cloudchat-pro",
   "version": "2.0.0",
   "description": "CloudChat Pro - Мессенджер с видео/аудиозвонками",
-  "main": "backend.js",
   "scripts": {
-    "start": "node backend.js",
-    "dev": "node backend.js"
+    "dev": "node backend.js",
+    "build": "echo 'Building...'",
+    "start": "node backend.js"
   },
-  "keywords": ["messenger", "chat", "webrtc", "video", "audio"],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "socket.io": "^4.5.4",
