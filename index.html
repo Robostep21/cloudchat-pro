@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudChat Pro - Мессенджер с видеозвонками</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ЭКРАН АВТОРИЗАЦИИ -->
+    <div id="authScreen" class="auth-screen active">
+        <div class="auth-container">
+            <div class="auth-logo">💬</div>
+            <h1>CloudChat Pro</h1>
+            
+            <!-- TAB: Вход -->
+            <div id="loginTab" class="auth-tab active">
+                <h2>Вход</h2>
+                <div class="input-with-prefix">
+                    <span class="input-prefix">@</span>
+                    <input type="text" id="loginUsername" placeholder="username" maxlength="20">
+                </div>
+                <input type="password" id="loginPassword" placeholder="Пароль">
+                <label class="remember-label">
+                    <input type="checkbox" id="rememberMe">
+                    <span>Запомнить меня</span>
+                </label>
+                <button id="loginBtn" class="auth-btn">Войти</button>
+                <p>Нет аккаунта? <button class="tab-switch" onclick="switchAuthTab('register')">Регистрация</button></p>
+            </div>
+
+            <!-- TAB: Регистрация -->
+            <div id="registerTab" class="auth-tab">
+                <h2>Регистрация</h2>
+                <div class="input-with-prefix">
+                    <span class="input-prefix">@</span>
+                    <input type="text" id="regUsername" placeholder="username" maxlength="20">
+                </div>
+                <input type="password" id="regPassword" placeholder="Пароль">
+                <input type="password" id="regPassword2" placeholder="Повтори пароль">
+                <button id="registerBtn" class="auth-btn">Создать аккаунт</button>
+                <p>Уже есть? <button class="tab-switch" onclick="switchAuthTab('login')">Вход</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ГЛАВНОЕ ПРИЛОЖЕНИЕ -->
+    <div id="appScreen" class="app-screen">
+        <div class="app-container">
+            <!-- ЛЕВАЯ ПАНЕЛЬ -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h1>CloudChat</h1>
+                    <button class="theme-toggle" id="themeBtn">🌙</button>
+                </div>
+
+                <div class="user-card">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-info">
+                        <div id="currentUsername" class="user-name">@username</div>
+                        <div class="user-status online">● В сети</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="chats">💬 Чаты</button>
+                    <button class="tab-btn" data-tab="groups">👥 Группы</button>
+                    <button class="tab-btn" data-tab="users">👤 Пользователи</button>
+                </div>
+
+                <!-- ЧАТЫ -->
+                <div id="chatsTab" class="tab-content active">
+                    <button class="new-chat-btn" id="newChatBtn">+ Новый чат</button>
+                    <div id="chatsList" class="items-list"></div>
+                </div>
+
+                <!-- ГРУППЫ -->
+                <div id="groupsTab" class="tab-content">
+                    <button class="new-chat-btn" id="newGroupBtn">+ Новая группа</button>
+                    <div id="groupsList" class="items-list"></div>
+                </div>
+
+                <!-- ПОЛЬЗОВАТЕЛИ -->
+                <div id="usersTab" class="tab-content">
+                    <div id="usersList" class="items-list"></div>
+                </div>
+
+                <button id="logoutBtn" class="logout-btn">Выход</button>
+            </div>
+
+            <!-- ЦЕНТРАЛЬНАЯ ЧАСТЬ - ЧАТ -->
+            <div class="chat-area">
+                <!-- HEADER -->
+                <div class="chat-header">
+                    <div class="header-left">
+                        <div id="chatAvatar" class="header-avatar">💬</div>
+                        <div class="header-info">
+                            <h2 id="chatName">Выбери чат</h2>
+                            <p id="chatStatus" class="chat-status">Нажми на чат слева</p>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="action-btn" id="audioCallBtn" title="Аудиозвонок">📞</button>
+                        <button class="action-btn" id="videoCallBtn" title="Видеозвонок">📹</button>
+                        <button class="action-btn" id="infoBtn" title="Информация">ℹ️</button>
+                    </div>
+                </div>
+
+                <!-- СООБЩЕНИЯ -->
+                <div class="messages-container" id="messagesContainer">
+                    <div class="empty-state">
+                        <div class="empty-icon">💬</div>
+                        <div class="empty-text">Выбери чат или создай новый</div>
+                    </div>
+                </div>
+
+                <!-- INPUT -->
+                <div class="input-area">
+                    <div class="input-actions">
+                        <button class="icon-btn" id="fileBtn">📎</button>
+                        <button class="icon-btn" id="photoBtn">📷</button>
+                    </div>
+                    <input type="text" id="messageInput" class="message-input" placeholder="Напиши сообщение...">
+                    <div class="input-actions">
+                        <button class="icon-btn" id="emojiBtn">😊</button>
+                        <button class="send-btn" id="sendBtn">➤</button>
+                    </div>
+
+                    <!-- Скрытые input'ы -->
+                    <input type="file" id="fileInput" style="display: none;">
+                    <input type="file" id="photoInput" accept="image/*" style="display: none;">
+
+                    <!-- Эмодзи пикер -->
+                    <div class="emoji-picker" id="emojiPicker">
+                        <div class="emoji-grid">
+                            <button class="emoji-item">😊</button>
+                            <button class="emoji-item">😂</button>
+                            <button class="emoji-item">❤️</button>
+                            <button class="emoji-item">🔥</button>
+                            <button class="emoji-item">👍</button>
+                            <button class="emoji-item">🎉</button>
+                            <button class="emoji-item">🚀</button>
+                            <button class="emoji-item">✨</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ЗВОНКА -->
+        <div id="callModal" class="modal hidden">
+            <div class="call-container">
+                <div id="remoteVideo" class="video-large"></div>
+                <div id="localVideo" class="video-small"></div>
+                
+                <div class="call-info">
+                    <h3 id="callWith">Звонок с пользователем</h3>
+                    <div id="callDuration" class="call-duration">00:00</div>
+                </div>
+
+                <div class="call-controls">
+                    <button id="toggleVideo" class="control-btn" title="Видео">📹</button>
+                    <button id="toggleAudio" class="control-btn" title="Микрофон">🎤</button>
+                    <button id="endCall" class="control-btn danger" title="Завершить">☎️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ОКНО ОЖИДАНИЯ ОТВЕТА НА ЗВОНОК -->
+        <div id="waitingCallModal" class="modal hidden">
+            <div class="waiting-call">
+                <div class="calling-animation">
+                    <div class="pulse"></div>
+                    <div class="pulse"></div>
+                    <div class="pulse"></div>
+                </div>
+                <h2 id="waitingCallWith">Вызов @пользователя...</h2>
+                <p id="waitingCallType">Видеозвонок</p>
+                <p class="waiting-text">Ожидание ответа...</p>
+                <button id="cancelCall" class="reject-btn">✕ Отмена</button>
+            </div>
+        </div>
+
+        <!-- ВХОДЯЩИЙ ЗВОНОК -->
+        <div id="incomingCallModal" class="modal hidden">
+            <div class="incoming-call">
+                <div class="incoming-icon">📱</div>
+                <h2 id="incomingCaller">@user вызывает...</h2>
+                <p id="incomingType">Видеозвонок</p>
+                <div class="incoming-actions">
+                    <button id="acceptCallBtn" class="accept-btn">✓ Ответить</button>
+                    <button id="rejectCallBtn" class="reject-btn">✕ Отклонить</button>
+                </div>
+            </div>
+        </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ УВЕДОМЛЕНИЙ -->
+    <div id="alertModal" class="modal-overlay hidden">
+        <div class="alert-panel">
+            <div class="alert-icon" id="alertIcon">ℹ️</div>
+            <h3 id="alertTitle">Уведомление</h3>
+            <p id="alertMessage">Сообщение</p>
+            <button id="alertBtn" class="btn-primary">OK</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОДТВЕРЖДЕНИЯ -->
+    <div id="confirmModal" class="modal-overlay hidden">
+        <div class="confirm-panel">
+            <h3 id="confirmTitle">Подтверждение</h3>
+            <p id="confirmMessage">Вы уверены?</p>
+            <div class="confirm-buttons">
+                <button id="confirmYes" class="btn-primary">Да</button>
+                <button id="confirmNo" class="btn-secondary">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВВОДА ТЕКСТА -->
+    <div id="promptModal" class="modal-overlay hidden">
+        <div class="prompt-panel">
+            <h3 id="promptTitle">Введи данные</h3>
+            <input type="text" id="promptInput" class="prompt-input" placeholder="Текст...">
+            <div class="prompt-buttons">
+                <button id="promptOk" class="btn-primary">OK</button>
+                <button id="promptCancel" class="btn-secondary">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- КОНТЕКСТНОЕ МЕНЮ СООБЩЕНИЙ -->
+    <div id="messageContextMenu" class="context-menu hidden">
+        <button class="context-menu-item" data-action="pin">📌 Закрепить</button>
+        <button class="context-menu-item" data-action="copy">📋 Копировать</button>
+        <button class="context-menu-item" data-action="delete">🗑️ Удалить</button>
+    </div>
+
+    <!-- КОНТЕКСТНОЕ МЕНЮ ЧАТОВ -->
+    <div id="chatContextMenu" class="context-menu hidden">
+        <button class="context-menu-item" data-action="clear">🗑️ Очистить чат</button>
+        <button class="context-menu-item" data-action="deleteChat">❌ Удалить чат</button>
+    </div>
+    </div>
+
+    <!-- СКРЫТЫЙ РИНГТОН -->
+    <audio id="ringtone" preload="auto" loop>
+        <source src="ringtone.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
